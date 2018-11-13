@@ -1,0 +1,40 @@
+version: "3.3"
+
+services:
+  wp-api-db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - ./temp/wp-database:/var/lib/mysql
+    command: --log_error_verbosity=1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wp-api:
+    build: https://github.com/minas-dev-test/farma-news.git
+    depends_on:
+      - wp-api-db
+    ports:
+      - "3001:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: wp-api-db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_URL: "http://localhost:3001"
+      WORDPRESS_TITLE: "Farma News"
+  middleware:
+    build: .
+    command: npm run dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3000:8080"
+    depends_on:
+      - wp-api
+    environment: 
+      MS_NEWS: "http://wp-api"
