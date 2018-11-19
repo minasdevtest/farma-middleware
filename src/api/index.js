@@ -3,14 +3,15 @@ import { Router } from 'express';
 import facets from './facets';
 import microServiceMiddleware from './microServceMiddleware.js';
 
-export default ({ config, db }) => {
+const api = ({ config, db }) => {
 	let api = Router();
 
 	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
 
-
-	api.use('/news', microServiceMiddleware({url: 'http://wp-api:80/wp-json/wp/v2'}))
+	// Setup News Middleware
+	if (process.env.MS_NEWS)
+		api.use('/news', microServiceMiddleware({ url: process.env.MS_NEWS + '/wp-json/wp/v2' }))
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
@@ -19,3 +20,5 @@ export default ({ config, db }) => {
 
 	return api;
 }
+
+export default api

@@ -2,20 +2,22 @@
 import { Router } from 'express'
 import bodyParser from 'body-parser'
 import Axios from 'axios';
+import httpProxy from 'http-proxy'
 
-export default function microServiceMiddleware({ url }) {
+const proxy = httpProxy.createProxyServer()
+
+export default function microServiceMiddleware({ url }, callback) {
     let router = new Router()
 
     router.use(bodyParser.json())
     router.use(bodyParser.urlencoded({ extended: true }))
 
-    router.all('*', ({ method, url: route, body: data }, res) => {
-        console.log(url + route, method, data)
+    callback && callback(router)
 
-        Axios({ url: url + route, method })
-            .then(({ data, status }) => res.status(status).json(data))
-            .catch(({ response }) => res.status(response.status).json(response.data))
-    })
+    // Reverse Proxy
+    router.all('*', (req, res) =>
+        proxy.web(req, res, { target: url })
+    )
 
     return router
 }
