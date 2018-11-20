@@ -4,14 +4,19 @@ import facets from './facets';
 import microServiceMiddleware from './microServceMiddleware.js';
 
 const api = ({ config, db }) => {
-	let api = Router();
 
+	const api = Router();
+	const { MS_NEWS, MS_LOCATION } = process.env
 	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
 
 	// Setup News Middleware
-	if (process.env.MS_NEWS)
-		api.use('/news', microServiceMiddleware({ url: process.env.MS_NEWS + '/wp-json/wp/v2' }))
+	if (MS_NEWS)
+		api.use('/news', microServiceMiddleware({ url: MS_NEWS + '/wp-json/wp/v2' }))
+
+	// Setup News Middleware
+	if (MS_LOCATION)
+		api.use('/location', microServiceMiddleware({ url: MS_LOCATION + '/pontos_de_apoio' }))
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {

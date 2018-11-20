@@ -9,8 +9,8 @@ const proxy = httpProxy.createProxyServer()
 export default function microServiceMiddleware({ url }, callback) {
     let router = new Router()
 
-    router.use(bodyParser.json())
-    router.use(bodyParser.urlencoded({ extended: true }))
+    // router.use(bodyParser.json())
+    // router.use(bodyParser.urlencoded({ extended: true }))
 
     callback && callback(router)
 

@@ -3,7 +3,6 @@ version: "3.3"
 services:
   wp-api-db:
     image: mysql:5.7
-    restart: always
     volumes:
       - ./temp/wp-database:/var/lib/mysql
     command: --log_error_verbosity=1
@@ -19,13 +18,23 @@ services:
       - wp-api-db
     ports:
       - "3001:80"
-    restart: always
     environment:
       WORDPRESS_DB_HOST: wp-api-db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_URL: "http://localhost:3001"
       WORDPRESS_TITLE: "Farma News"
+
+  api-pda-db:
+    image: mongo
+
+  api-pda:
+    build: https://github.com/minas-dev-test/api-pda.git
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://api-pda-db:27017/ufjf
+    depends_on:
+      - api-pda-db
+
   middleware:
     build: .
     command: npm run dev
@@ -36,5 +45,6 @@ services:
       - "3000:8080"
     depends_on:
       - wp-api
-    environment: 
+    environment:
       MS_NEWS: "http://wp-api"
+      MS_LOCATION: "http://api-pda:8080"
