@@ -6,7 +6,7 @@ import microServiceMiddleware from './microServceMiddleware.js';
 const api = ({ config, db }) => {
 
 	const api = Router();
-	const { MS_NEWS, MS_LOCATION } = process.env
+	const { MS_NEWS, MS_LOCATION, MS_MEDICINE } = process.env
 	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
 
@@ -17,6 +17,12 @@ const api = ({ config, db }) => {
 	// Setup News Middleware
 	if (MS_LOCATION)
 		api.use('/location', microServiceMiddleware({ url: MS_LOCATION + '/pontos_de_apoio' }))
+
+	// Setup Medicine Middleware
+	if (MS_MEDICINE)
+		api.use('/medicine', microServiceMiddleware({ url: MS_MEDICINE }))
+
+
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {

@@ -35,6 +35,27 @@ services:
     depends_on:
       - api-pda-db
 
+  medicamentos-api-db:
+    image: mysql:5.7
+    volumes:
+      - ./temp/med-database:/var/lib/mysql
+    command: --log_error_verbosity=1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: medicamentodb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+  
+  medicamentos-api:
+    build: https://github.com/minas-dev-test/farma_medicamento.git
+    depends_on:
+      - medicamentos-api-db
+    command: wait-for-it medicamentos-api-db:3306 --timeout=0 -- java -jar app.jar
+    environment: 
+      SPRING_DATASOURCE_URL: "jdbc:mysql://medicamentos-api-db:3306/medicamentodb"
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+
   middleware:
     build: .
     command: npm run dev
@@ -48,3 +69,4 @@ services:
     environment:
       MS_NEWS: "http://wp-api"
       MS_LOCATION: "http://api-pda:8080"
+      MS_MEDICINE: "http://medicamentos-api:8080"
