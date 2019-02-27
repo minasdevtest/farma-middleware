@@ -7,6 +7,7 @@
   },
   "main": "dist",
   "scripts": {
+    "heroku-postbuild": "npm run build",
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
     "dev-docker": "docker-compose up",
     "build": "babel src -s -D -d dist --presets es2015,stage-0",
