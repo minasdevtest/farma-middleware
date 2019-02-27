@@ -12,7 +12,7 @@ const api = ({ config, db }) => {
 
 	// Setup News Middleware
 	if (MS_NEWS)
-		api.use('/news', microServiceMiddleware({ url: MS_NEWS + '/wp-json/wp/v2' }))
+		api.use('/news', microServiceMiddleware({ url: MS_NEWS + '/wp-json/wp/v2/posts' }))
 
 	// Setup News Middleware
 	if (MS_LOCATION)
