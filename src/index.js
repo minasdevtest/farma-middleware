@@ -44,7 +44,7 @@ initializeDb(db => {
 //
 
 app.get("/", function (req, res) {
-	res.send('oK')
+	res.send(process.env)
 })
 
 app.get("/user", function (req, res) {
