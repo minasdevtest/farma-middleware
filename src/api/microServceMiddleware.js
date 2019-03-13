@@ -15,9 +15,10 @@ export default function microServiceMiddleware({ url }, callback) {
     callback && callback(router)
 
     // Reverse Proxy
-    router.all('*', (req, res) =>
-        proxy.web(req, res, { target: url })
-    )
+    router.all('*', (req, res) => {
+        console.info('MS middleware: acessing ', url, req, res)
+        return proxy.web(req, res, { target: url })
+    })
 
     return router
 }

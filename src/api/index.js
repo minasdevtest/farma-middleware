@@ -7,7 +7,6 @@ const api = ({ config, db }) => {
 
 	const api = Router();
 	const { MS_NEWS, MS_LOCATION, MS_MEDICINE } = process.env
-	console.info('Received MS: ', MS_NEWS, MS_LOCATION, MS_MEDICINE)
 	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
 
