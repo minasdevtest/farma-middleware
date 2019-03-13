@@ -4,7 +4,7 @@ import bodyParser from 'body-parser'
 import Axios from 'axios';
 import httpProxy from 'http-proxy'
 
-const proxy = httpProxy.createProxyServer()
+const proxy = httpProxy.createProxyServer({ secure: false })
 
 export default function microServiceMiddleware({ url }, callback) {
     let router = new Router()
@@ -18,7 +18,7 @@ export default function microServiceMiddleware({ url }, callback) {
     router.all('*', (req, res) => {
         console.info('MS middleware: acessing ', url)
         // return res.send('ok');
-        return proxy.web(req, res, { target: 'https://cors-anywhere.herokuapp.com/'.url, changeOrigin: true }, err => console.error('MS error: ', err))
+        return proxy.web(req, res, { target: 'https://cors-anywhere.herokuapp.com/' + url, changeOrigin: true }, err => console.error('MS error: ', err))
     })
 
     return router
