@@ -73,7 +73,7 @@ app.get("/user/:user", function (req, res) {
 })
 
 app.all("*", function (req, res) {
-	res.status(404).send('Not found')
+	res.status(404).send('404 Not found ' + req.url)
 })
 
 export default app;
