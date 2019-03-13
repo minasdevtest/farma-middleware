@@ -18,7 +18,7 @@ export default function microServiceMiddleware({ url }, callback) {
     router.all('*', (req, res) => {
         console.info('MS middleware: acessing ', url)
         // return res.send('ok');
-        return proxy.web(req, res, { target: 'https://cors-anywhere.herokuapp.com/' + url, changeOrigin: true }, err => console.error('MS error: ', err))
+        return proxy.web(req, res, { target: url, changeOrigin: true }, err => console.error('MS error: ', err))
     })
 
     return router
