@@ -19,8 +19,12 @@ const api = ({ config, db }) => {
 		api.use('/location', microServiceMiddleware({ url: MS_LOCATION + '/pontos_de_apoio' }))
 
 	// Setup Medicine Middleware
-	if (MS_MEDICINE)
+	if (MS_MEDICINE) {
+		api.use('/medicine/stock', microServiceMiddleware({ url: MS_MEDICINE + '/estoque' }))
+		api.use('/medicine/request', microServiceMiddleware({ url: MS_MEDICINE + '/solicitacao' }))
+		api.use('/medicine/types', microServiceMiddleware({ url: MS_MEDICINE + '/tipos' }))
 		api.use('/medicine', microServiceMiddleware({ url: MS_MEDICINE }))
+	}
 
 
 

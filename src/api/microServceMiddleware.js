@@ -1,7 +1,7 @@
 
 import { Router } from 'express'
-import bodyParser from 'body-parser'
-import Axios from 'axios';
+// import bodyParser from 'body-parser'
+// import Axios from 'axios';
 import httpProxy from 'http-proxy'
 
 const proxy = httpProxy.createProxyServer({ secure: false })
