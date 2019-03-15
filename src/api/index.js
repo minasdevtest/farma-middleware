@@ -23,7 +23,8 @@ const api = ({ config, db }) => {
 		api.use('/medicine/stock', microServiceMiddleware({ url: MS_MEDICINE + '/estoque' }))
 		api.use('/medicine/request', microServiceMiddleware({ url: MS_MEDICINE + '/solicitacao' }))
 		api.use('/medicine/types', microServiceMiddleware({ url: MS_MEDICINE + '/tipos' }))
-		api.use('/medicine', microServiceMiddleware({ url: MS_MEDICINE }))
+		api.use('/medicine/status', microServiceMiddleware({ url: MS_MEDICINE + '/status' }))
+		api.use('/medicine', microServiceMiddleware({ url: MS_MEDICINE+'/medicamentos' }))
 	}
 
 
