@@ -20,10 +20,10 @@ const api = ({ config, db }) => {
 
 	// Setup Medicine Middleware
 	if (MS_MEDICINE) {
-		// api.use('/medicine/stock', microServiceMiddleware({ url: MS_MEDICINE + '/estoque' }))
-		// api.use('/medicine/request', microServiceMiddleware({ url: MS_MEDICINE + '/solicitacao' }))
-		// api.use('/medicine/types', microServiceMiddleware({ url: MS_MEDICINE + '/tipos' }))
-		// api.use('/medicine/status', microServiceMiddleware({ url: MS_MEDICINE + '/status' }))
+		api.use('/medicine/stock', microServiceMiddleware({ url: MS_MEDICINE + '/estoque/acrescentar-ao-estoque' }))
+		api.use('/medicine/request', microServiceMiddleware({ url: MS_MEDICINE + '/solicitacao' }))
+		api.use('/medicine/types', microServiceMiddleware({ url: MS_MEDICINE + '/tipos' }))
+		api.use('/medicine/status', microServiceMiddleware({ url: MS_MEDICINE + '/status' }))
 		api.use('/medicine', microServiceMiddleware({ url: MS_MEDICINE+'/medicamentos' }))
 	}
 

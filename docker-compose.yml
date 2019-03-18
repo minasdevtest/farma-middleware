@@ -63,10 +63,13 @@ services:
       - .:/usr/app/
       - /usr/app/node_modules
     ports:
-      - "3000:8080"
+      - "3000:80"
     depends_on:
       - wp-api
     environment:
-      MS_NEWS: "http://wp-api"
-      MS_LOCATION: "http://api-pda:8080"
-      MS_MEDICINE: "http://medicamentos-api:8080"
+      # MS_NEWS: "http://wp-api"
+      # MS_LOCATION: "http://api-pda:8080"
+      # MS_MEDICINE: "http://medicamentos-api:8080"
+      MS_NEWS: "http://farmaciasolidaria.ddns.net:3000"
+      MS_LOCATION: "https://farmaciasolidaria-location.herokuapp.com"
+      MS_MEDICINE: "https://farmaciasolidaria-medicine.herokuapp.com"

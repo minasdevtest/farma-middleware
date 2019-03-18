@@ -12,11 +12,11 @@ export default function microServiceMiddleware({ url }, callback) {
     // router.use(bodyParser.json())
     // router.use(bodyParser.urlencoded({ extended: true }))
 
-    callback && callback(router)
+    callback && callback(router, proxy)
 
     // Reverse Proxy
     router.all('*', (req, res) => {
-        return proxy.web(req, res, { target: url, changeOrigin: true }, err => console.error('MS error: ', err))
+        return proxy.web(req, res, { target: url, changeOrigin: true, headers:{'Xorumelos': '*'} }, err => console.error('MS error: ', err))
     })
 
     return router
