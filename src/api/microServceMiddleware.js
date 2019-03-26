@@ -1,23 +1,36 @@
 
 import { Router } from 'express'
-// import bodyParser from 'body-parser'
-// import Axios from 'axios';
-import httpProxy from 'http-proxy'
 
-const proxy = httpProxy.createProxyServer({ secure: false })
+// import httpProxy from 'http-proxy'
+// import expressProxy from 'express-http-proxy'
+import proxyMiddleware from 'http-proxy-middleware'
 
-export default function microServiceMiddleware({ url }, callback) {
+// const proxy = httpProxy.createProxyServer({ secure: false })
+
+export default function microServiceMiddleware({ url: target, method, methods = method && [method], settings = {} }) {
     let router = new Router()
 
-    // router.use(bodyParser.json())
-    // router.use(bodyParser.urlencoded({ extended: true }))
+    const config = { changeOrigin: true, target, ...settings }
+    let proxy
 
-    callback && callback(router, proxy)
+    if (methods)
+        proxy = proxyMiddleware((pathname, req) => {
+            return -1 !== methods.findIndex(method => req.method === method)
+        }, config)
+    else
+        proxy = proxyMiddleware(config)
+
+
+    router.use((req, res, next) => {
+        req.originalUrl = req.path
+        next()
+    }, proxy)
+
 
     // Reverse Proxy
-    router.all('*', (req, res) => {
-        return proxy.web(req, res, { target: url, changeOrigin: true, headers:{'Xorumelos': '*'} }, err => console.error('MS error: ', err))
-    })
+    // router.all('*', (req, res) => {
+    //     return proxy.web(req, res, { target: url, changeOrigin: true, headers:{'Xorumelos': '*'} }, err => console.error('MS error: ', err))
+    // })
 
     return router
 }
