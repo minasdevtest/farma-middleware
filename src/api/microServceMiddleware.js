@@ -9,8 +9,7 @@ import proxyMiddleware from 'http-proxy-middleware'
 
 export default function microServiceMiddleware({ url: target, method, methods = method && [method], settings = {} }) {
     let router = new Router()
-
-    const config = { changeOrigin: true, target, ...settings }
+    const config = { changeOrigin: true, target, logLevel: 'warn', ...settings }
     let proxy
 
     if (methods)
@@ -25,6 +24,12 @@ export default function microServiceMiddleware({ url: target, method, methods = 
         req.originalUrl = req.path
         next()
     }, proxy)
+
+    console.info(
+        '[ProxyMiddleware] Created:',
+        target.split('/')[2],
+        methods ? methods.join(',') : 'ALL'
+    )
 
 
     // Reverse Proxy

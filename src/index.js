@@ -35,20 +35,19 @@ initializeDb(db => {
 	// api V1 router
 	app.use('/api/v1', api({ config, db }));
 
+	app.get("/", function (req, res) {
+		res.send(process.env)
+	})
+	
+	app.all("*", function (req, res) {
+		res.send(404)
+	})
+
 	app.server.listen(process.env.PORT || config.port, () => {
 		console.log(`Started on port ${app.server.address().port}`);
 	});
 });
 
 
-//
-
-app.get("/", function (req, res) {
-	res.send(process.env)
-})
-
-app.all("*", function (req, res) {
-	res.send(404)
-})
 
 export default app;
