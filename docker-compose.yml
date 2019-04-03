@@ -56,20 +56,30 @@ services:
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
 
+  auth-db:
+    image: mongo
+    ports:
+      - "27018:27017"
+
   middleware:
     build: .
     command: npm run dev
     volumes:
       - .:/usr/app/
-      - /usr/app/node_modules
+      - ./node_modules:/usr/app/node_modules
     ports:
-      - "3000:80"
+      - "3010:3010"
     depends_on:
-      - wp-api
+      - auth-db
     environment:
       # MS_NEWS: "http://wp-api"
       # MS_LOCATION: "http://api-pda:8080"
       # MS_MEDICINE: "http://medicamentos-api:8080"
+      PORT: 3010
       MS_NEWS: "http://farmaciasolidaria.ddns.net:3000"
       MS_LOCATION: "https://farmaciasolidaria-location.herokuapp.com"
       MS_MEDICINE: "https://farmaciasolidaria-medicine.herokuapp.com"
+      MONGODB_URI: mongodb://auth-db:27017/farmacia
+      GATEWAY_ADMIN_USER: admin
+      GATEWAY_ADMIN_PASSWORD: admin
+      GATEWAY_ADMIN_MAIL: admin@example.com
