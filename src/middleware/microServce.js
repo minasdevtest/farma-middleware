@@ -19,23 +19,19 @@ export default function microServiceMiddleware({ url: target, method, methods = 
     else
         proxy = proxyMiddleware(config)
 
-
-    router.use((req, res, next) => {
-        req.originalUrl = req.path
-        next()
-    }, proxy)
-
     console.info(
         '[ProxyMiddleware] Created:',
         target.split('/')[2],
         methods ? methods.join(',') : 'ALL'
     )
 
+    return (req, ...args) => {
+        req.originalUrl = req.path
+        return proxy(req, ...args)
+    }
 
     // Reverse Proxy
     // router.all('*', (req, res) => {
     //     return proxy.web(req, res, { target: url, changeOrigin: true, headers:{'Xorumelos': '*'} }, err => console.error('MS error: ', err))
     // })
-
-    return router
 }

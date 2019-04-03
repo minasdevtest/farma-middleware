@@ -1,7 +1,7 @@
 import { Schema, model, Model } from "mongoose";
 import Roles from './roles'
 import { genSalt, hash, compare } from "bcryptjs";
-import { rejectIfEmpty } from "../lib/util";
+import { rejectIfEmpty, responseError } from "../lib/util";
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 const SALT_WORK_FACTOR = 10
 
@@ -47,10 +47,10 @@ Object.assign(UserSchema.statics, {
                 console.log('XOXO', email, password)
                 return this.findOne({ email })
             })
-            .then(rejectIfEmpty('User not found'))
+            .then(rejectIfEmpty('Usuário não encontrado'))
             .then(user => userFound = user)
             .then(() => compare(password, userFound.password))
-            .then((auth) => auth ? userFound : Promise.reject('Invalid password'))
+            .then((auth) => auth ? userFound : Promise.reject(responseError({ message: 'Senha inválida', status: 401 })))
     }
 })
 
@@ -58,16 +58,25 @@ Object.assign(UserSchema.statics, {
 
 
 function passwordFix(next) {
-    console.log("\n\n\n\nHashing password\n\n\n\n")
-    console.log(this.password)
     const user = this;
     if (!user.isModified('password')) return next();
+    console.log("\n\n\n\nHashing password\n\n\n\n")
+    console.log(this.password)
 
     return hashPassword(user.password)
-        .then(hash => user.password = hash)
-        .then(() => next())
-        .catch(err => next(err))
+        .then(hash => {
+            user.password = hash
+            console.log('hashed', this.password)
+            next()
+        })
+        .catch(err => console.error(err) || next(err))
 }
+
+UserSchema.pre('save', passwordFix)
+// UserSchema.pre('update', passwordFix)
+// UserSchema.pre('updateOne', passwordFix)
+// // UserSchema.pre('updateMany', passwordFix)
+// UserSchema.pre('findOneAndUpdate', passwordFix)
 
 UserSchema.post('save', (error, doc, next) => {
     // return next(error)
@@ -94,11 +103,7 @@ UserSchema.post('save', (error, doc, next) => {
     return next();
 });
 
-// UserSchema.pre('save', passwordFix)
-// UserSchema.pre('update', passwordFix)
-// UserSchema.pre('updateOne', passwordFix)
-// // UserSchema.pre('updateMany', passwordFix)
-// UserSchema.pre('findOneAndUpdate', passwordFix)
+
 
 
 

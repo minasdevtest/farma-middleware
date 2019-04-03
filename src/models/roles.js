@@ -25,7 +25,7 @@ export default class Roles {
      * @returns {String[]} registered role
      * @memberof Roles
      */
-    static registerRole(name, permissions = []){
+    static registerRole(name, permissions = []) {
         this.roles[name] = [...permissions].sort()
         return this.roles[name]
     }
@@ -38,7 +38,7 @@ export default class Roles {
      * @returns {Array}
      * @memberof Roles
      */
-    static getRole(name){
+    static getRole(name) {
         return this.roles[name]
     }
 
@@ -61,19 +61,46 @@ export default class Roles {
     }
 
     /**
+     * Get permissions combination of an role
+     *
+     * @static
+     * @param {String[]} roles
+     * @returns {String[]}
+     * @memberof Roles
+     */
+    static getPermissions(roles) {
+        return this.extendRoles(roles)
+    }
+
+    /**
      * Get list of roles names
      *
      * @static
      * @returns {String[]}
      * @memberof Roles
      */
-    static getRolesList(){
+    static getRolesList() {
         return Object.keys(this.roles)
+    }
+
+    /**
+     * Check if the role math permissions
+     *
+     * @static
+     * @param {String[]} permissions
+     * @param {String[]} roles
+     * @returns {Boolean}
+     * @memberof Roles
+     */
+    static checkPermission(permissions, roles) {
+        console.log('Checking permissions', permissions, roles)
+        const rolePermissions = this.getPermissions(roles)
+        return permissions.every(permission => rolePermissions.indexOf(permission) > -1)
     }
 }
 
 // register user role
-Roles.registerRole('user', ['read:posts'])
+Roles.registerRole('user', ['read:posts', 'read:location'])
 
 // register admin role
-Roles.registerRole('admin', Roles.extendRoles('user', ['write:posts']))
+Roles.registerRole('admin', Roles.extendRoles('user', ['write:posts', 'write:location']))

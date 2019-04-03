@@ -1,8 +1,7 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
-import facets from './facets';
-import microServiceMiddleware from './microServceMiddleware.js';
-import { withAuth, login, userCRUD } from '../middleware/auth.js';
+import microServiceMiddleware from '../middleware/microServce';
+import { withAuth, login, userCRUD, withPermission } from '../middleware/auth.js';
 
 const {
 	MS_NEWS = 'http://farmaciasolidaria.ddns.net:3000',
@@ -22,16 +21,18 @@ const api = ({ config, db }) => {
 		api.use('/news', microServiceMiddleware({ method: 'GET', url: MS_NEWS + '/wp-json/wp/v2/posts' }))
 
 	// Setup News Middleware
-	if (MS_LOCATION)
-		api.use('/location', microServiceMiddleware({ url: MS_LOCATION + '/pontos_de_apoio' }))
-
+	if (MS_LOCATION) {
+		api.use('/location',  withPermission('read:location'), microServiceMiddleware({ method: 'GET', url: MS_LOCATION + '/pontos_de_apoio' }))
+		api.use('/location', withPermission('write:location'), microServiceMiddleware({ method: ['POST', 'PUT', 'DELETE'], url: MS_LOCATION + '/pontos_de_apoio' }))
+	}
 	// Setup Medicine Middleware
 	if (MS_MEDICINE) {
 		api.use('/medicine/stock', microServiceMiddleware({ url: MS_MEDICINE + '/estoque/acrescentar-ao-estoque' }))
 		api.use('/medicine/request', microServiceMiddleware({ url: MS_MEDICINE + '/solicitacao' }))
 		api.use('/medicine/types', microServiceMiddleware({ url: MS_MEDICINE + '/tipos' }))
 		api.use('/medicine/status', microServiceMiddleware({ url: MS_MEDICINE + '/status' }))
-		api.use('/medicine', microServiceMiddleware({ url: MS_MEDICINE + '/medicamentos' }))
+		api.use('/medicine', microServiceMiddleware({ method: 'GET', url: MS_MEDICINE + '/medicamentos' }))
+		api.use('/medicine', withPermission('write:medicine'), microServiceMiddleware({ method: ['POST', 'PUT', 'DELETE'], url: MS_MEDICINE + '/medicamentos' }))
 	}
 
 

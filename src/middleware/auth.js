@@ -6,12 +6,14 @@ import jwt from 'jsonwebtoken'
 import { Router } from 'express'
 import bodyParser from 'body-parser'
 import User from '../models/user';
-import { rejectIfEmpty, promiseCatchLog } from '../lib/util';
+import { rejectIfEmpty, promiseCatchLog, promiseLog } from '../lib/util';
+import Roles from '../models/roles';
 
 const { SECRET = 'nosecret', JWT_LIMIT = '7d' } = process.env
 
 export function withAuth(req, res, next) {
     const { Authorization, authorization = Authorization || '' } = req.headers;
+    console.log('With Auth')
     const token = authorization.split(' ')[1]
     if (!token)
         return res.status(401).send({ auth: false, message: 'No auth' });
@@ -22,10 +24,24 @@ export function withAuth(req, res, next) {
 
         // se tudo estiver ok, salva no request para uso posterior
         req.auth = decoded;
-        console.log('Validationg')
+        console.log('Validating')
 
         next();
     });
+}
+
+export function withPermission(...permissions) {
+    return (req, res, next) => withAuth(req, res,
+        (error) => {
+            console.log('With Permission', permissions)
+            if (error)
+                return next(error)
+            return User.findById(req.auth.user._id)
+                .then(rejectIfEmpty({status: 401, auth: false, message: 'Invalid Auth' }))
+                .then(promiseLog("\n"))
+                .then(user => Roles.checkPermission(permissions, user.roles) ? next() : res.send(401))
+                .catch(err => res.status(err.status || 500).send(err.message))
+        })
 }
 
 export function login() {

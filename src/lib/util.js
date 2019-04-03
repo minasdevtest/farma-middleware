@@ -19,8 +19,12 @@ export function toRes(res, status = 200) {
 	};
 }
 
+export function responseError({ message, status = 500, ...props }) {
+	return Object.assign(new Error(message), { status }, props)
+}
+
 export function rejectIfEmpty(message, status = 404) {
-	return data => data ? data : Promise.reject(Object.assign(new Error(message), { status }))
+	return data => data ? data : Promise.reject(responseError({ message, status }))
 }
 
 export function promiseLog(message = '', level = 'log') {
