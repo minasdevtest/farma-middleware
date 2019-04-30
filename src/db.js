@@ -29,7 +29,6 @@ const connect = callback => {
 					process.exit(1);
 
 				})
-			callback();
 		})
 		.catch(err => {
 			console.error(`[MONGODB] MongoDB Connection:`, err);
