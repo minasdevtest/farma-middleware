@@ -100,7 +100,13 @@ export default class Roles {
 }
 
 // register user role
-Roles.registerRole('user', ['read:posts', 'read:location'])
+Roles.registerRole('user', ['read:post', 'read:location', 'read:medicine'])
 
 // register admin role
-Roles.registerRole('admin', Roles.extendRoles('user', ['write:posts', 'write:location']))
+Roles.registerRole('admin', Roles.extendRoles('user', [
+    'write:post',
+    'write:location',
+    'read:user',
+    'write:user',
+    'write:medicine',
+]))

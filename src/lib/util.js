@@ -34,3 +34,7 @@ export function promiseLog(message = '', level = 'log') {
 export function promiseCatchLog(message = '', level = 'error') {
 	return data => console[level](message, data) || Promise.reject(data)
 }
+
+export function errorResponse(res) {
+	return error => console.error(error) || res.status(error.status || 500).send(error.message)
+}

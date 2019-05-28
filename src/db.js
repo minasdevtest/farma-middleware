@@ -23,12 +23,13 @@ const connect = callback => {
 				)
 				.then(() => User.findByEmail(GATEWAY_ADMIN_EMAIL))
 				.then(res => console.info('[MONGODB] Inserted base admin', res))
-				.then(() => callback({ User }))
 				.catch(err => {
 					console.error(`[MONGODB] Insert base admin error:`, err.message);
 					process.exit(1);
 
 				})
+				.then(() => callback({ User }))
+
 		})
 		.catch(err => {
 			console.error(`[MONGODB] MongoDB Connection:`, err);

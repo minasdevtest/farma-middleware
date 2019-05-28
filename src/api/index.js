@@ -1,7 +1,7 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
 import microServiceMiddleware from '../middleware/microServce';
-import { withAuth, login, userCRUD, withPermission } from '../middleware/auth.js';
+import { withAuth, login, userCRUD, withPermission, userManagement } from '../middleware/auth.js';
 
 const {
 	MS_NEWS = 'http://farmaciasolidaria.ddns.net:3000',
@@ -13,8 +13,8 @@ const api = ({ config, db }) => {
 	const api = Router();
 
 	api.use('/login', login())
-
-	api.use('/user', withAuth, userCRUD())
+	api.use('/me', userManagement())
+	api.use('/user', userCRUD())
 
 	// Setup News Middleware
 	if (MS_NEWS)
@@ -34,8 +34,6 @@ const api = ({ config, db }) => {
 		api.use('/medicine', microServiceMiddleware({ method: 'GET', url: MS_MEDICINE + '/medicamentos' }))
 		api.use('/medicine', withPermission('write:medicine'), microServiceMiddleware({ method: ['POST', 'PUT', 'DELETE'], url: MS_MEDICINE + '/medicamentos' }))
 	}
-
-
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
